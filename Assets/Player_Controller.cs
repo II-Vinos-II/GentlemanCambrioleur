@@ -6,7 +6,8 @@ public class Player_Controller : MonoBehaviour
 {
     private Vector3 _input;
     public Rigidbody rb;
-    public float _speed;
+    public float _Speed;
+    public float _RotaSpeed;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,19 +34,21 @@ public class Player_Controller : MonoBehaviour
 
     void Move()
     {
-        rb.MovePosition(transform.position + transform.forward * _speed * Time.deltaTime);
+        rb.MovePosition(transform.position + (transform.forward * _input.magnitude) * _Speed * Time.deltaTime);
     }
 
     void Look()
     {
         if (_input != Vector3.zero)
         {
-            var relative = (transform.position + _input) - transform.position;
+            var matrix = Matrix4x4.Rotate(Quaternion.Euler(0,45,0));
+
+            var SkewedInput = matrix.MultiplyPoint3x4(_input);
+
+            var relative = (transform.position + SkewedInput) - transform.position;
             var rot = Quaternion.LookRotation(relative, Vector3.up);
 
-            transform.rotation = rot;
-
-            Debug.Log(_input);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, _RotaSpeed * Time.deltaTime);
         }
         
     }
