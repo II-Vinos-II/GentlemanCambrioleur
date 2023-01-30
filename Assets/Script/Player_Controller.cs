@@ -8,6 +8,7 @@ public class Player_Controller : MonoBehaviour
     public Rigidbody rb;
     public float _Speed;
     public float _RotaSpeed;
+    public bool Grounded;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +26,7 @@ public class Player_Controller : MonoBehaviour
         Move();
         GatherInputs();
         Look();
+        GroundDetection();
     }
 
     void GatherInputs()
@@ -50,6 +52,20 @@ public class Player_Controller : MonoBehaviour
 
             transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, _RotaSpeed * Time.deltaTime);
         }
-        
     }
+
+    void GroundDetection()
+    {
+        if (Physics.Raycast(transform.position - new Vector3(0, 0.9f, 0), Vector3.down, 0.3f))
+        {
+            Grounded = true;
+        }
+        else Grounded = false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(transform.position - new Vector3(0, 0.9f, 0), Vector3.down *0.3f);
+    }
+
 }
